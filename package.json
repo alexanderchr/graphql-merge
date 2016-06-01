@@ -1,0 +1,16 @@
+{
+  "name": "graphql-merge",
+  "version": "0.0.1",
+  "description": "Utility to merge GraphQL schemas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Christiansson",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.9.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0"
+  }
+}
