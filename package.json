@@ -1,16 +1,28 @@
 {
   "name": "graphql-merge",
   "version": "0.0.1",
-  "description": "Utility to merge GraphQL schemas",
+  "description": "Utility to merge GraphQL queries",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint . --ignore-path .gitignore",
+    "test": "ava **/*.test.js --require babel-register",
+    "test:watch": "npm run test -- --watch"
   },
   "author": "Alexander Christiansson",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.15.1",
     "babel-core": "^6.9.1",
+    "babel-eslint": "^6.0.4",
     "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-0": "^6.5.0"
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "eslint": "^2.11.1",
+    "eslint-config-airbnb-base": "^3.0.1",
+    "eslint-plugin-import": "^1.8.1"
+  },
+  "dependencies": {
+    "graphql": "^0.6.0",
+    "lodash.differencewith": "^4.3.0"
   }
 }
