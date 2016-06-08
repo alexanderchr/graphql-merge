@@ -21,25 +21,11 @@ test('true given two any two documents', (t) => {
 
 // Operation definition
 
-test('true given two operation definitions with same operation AND name', (t) => {
+test('true given any two operation definitions', (t) => {
   const documentA = parse('query User { user }');
   const documentB = parse('query User { user }');
 
   t.true(isSimilar(documentA.definitions[0], documentB.definitions[0]));
-});
-
-test('false given two operation definitions with different name', (t) => {
-  const documentA = parse('query User { user }');
-  const documentB = parse('query User2 { user }');
-
-  t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
-});
-
-test('false given two operation definitions with different operation', (t) => {
-  const documentA = parse('query User { user }');
-  const documentB = parse('mutation User { user }');
-
-  t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
 });
 
 // Field

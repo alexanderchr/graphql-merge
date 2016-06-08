@@ -27,12 +27,11 @@ test('does not add same field twice', (t) => {
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address } }');
 });
 
-test('handles multiple definitions', (t) => {
+test('throw when merging two different operations', (t) => {
   const a = parse('query { users { name address } }');
   const b = parse('mutation { addUser }');
 
-  const mergeResult = merge(a, b);
-  t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address } } mutation { addUser }');
+  t.throws(() => merge(a, b));
 });
 
 test('merges deeply', (t) => {
