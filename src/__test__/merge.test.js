@@ -12,16 +12,16 @@ function notSoPrettyPrintQuery(query) {
 }
 
 test('merges', (t) => {
-  const a = parse('query { users { name } }');
-  const b = parse('query { users { address something } }');
+  const a = parse('{ users { name } }');
+  const b = parse('{ users { address something } }');
 
   const mergeResult = merge(a, b);
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address something } }');
 });
 
 test('does not add same field twice', (t) => {
-  const a = parse('query { users { name } }');
-  const b = parse('query { users { name address } }');
+  const a = parse('{ users { name } }');
+  const b = parse('{ users { name address } }');
 
   const mergeResult = merge(a, b);
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address } }');
@@ -34,15 +34,48 @@ test('throw when merging two different operations', (t) => {
   t.throws(() => merge(a, b));
 });
 
+// replaces test below
+test.skip('removes operation name when two named operations are merged', (t) => {
+  const a = parse('query VeryGood { users { name address } }');
+  const b = parse('query Important { users { name address } }');
+
+  const mergeResult = merge(a, b);
+  t.is(notSoPrettyPrintQuery(mergeResult), 'query { users { name address } }');
+});
+
+test('merges operations with different names', (t) => {
+  const a = parse('query VeryGood { users { name address } }');
+  const b = parse('query Important { users { name address } }');
+
+  const mergeResult = merge(a, b);
+  t.is(notSoPrettyPrintQuery(mergeResult), 'query VeryGood { users { name address } }');
+});
+
 test('merges deeply', (t) => {
-  const a = parse('query { users { address { firstLine } } }');
-  const b = parse('query { users { address { secondLine } email } }');
+  const a = parse('{ users { address { firstLine } } }');
+  const b = parse('{ users { address { secondLine } email } }');
 
   const mergeResult = merge(a, b);
   t.is(
     notSoPrettyPrintQuery(mergeResult),
     '{ users { address { firstLine secondLine } email } }'
   );
+});
+
+// not implemented
+test.skip('throws when given two fragments with the same name', (t) => {
+  const a = parse('{ fragment Something on User { address } } }');
+  const b = parse('{ fragment Something on Person { name } } }');
+
+  t.throws(() => merge(a, b));
+});
+
+test('merges inline fragments', (t) => {
+  const a = parse('query { users { ... on User { address } } }');
+  const b = parse('query { users { ... on User { name phone } } }');
+
+  const mergeResult = merge(a, b);
+  t.is(notSoPrettyPrintQuery(mergeResult), '{ users { ... on User { address name phone } } }');
 });
 
 test.skip('throws when merging a selection without sub-selections with one with', (t) => {

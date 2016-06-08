@@ -9,6 +9,7 @@ export default function removeChildNode(parent, node) {
       };
 
     case Kind.OPERATION_DEFINITION:
+    case Kind.INLINE_FRAGMENT:
     case Kind.FIELD:
       return {
         ...parent,

@@ -32,3 +32,14 @@ test('removes a selection from a field', (t) => {
 
   t.is(newField.selectionSet.selections.length, 1);
 });
+
+test('removes a selection from an inline fragment', (t) => {
+  const selection = { kind: Kind.INLINE_FRAGMENT };
+  const fragment = {
+    kind: Kind.INLINE_FRAGMENT,
+    selectionSet: { selections: [selection, {}] },
+  };
+  const newFragment = removeChildNode(fragment, selection);
+
+  t.is(newFragment.selectionSet.selections.length, 1);
+});

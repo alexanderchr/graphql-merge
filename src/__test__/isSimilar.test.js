@@ -75,3 +75,23 @@ test('false given two fields with same arguments but different variables', (t) =
 
   t.false(isSimilar(fieldA, fieldB));
 });
+
+// Inline fragment
+
+test('true given two inline fragments with same type definitions', (t) => {
+  const fragmentA = parse('{ ... on User { name } }')
+    .definitions[0].selectionSet.selections[0];
+  const fragmentB = parse('{ ... on User { company } }')
+    .definitions[0].selectionSet.selections[0];
+
+  t.true(isSimilar(fragmentA, fragmentB))
+});
+
+test('false given two inline fragments with different type definitions', (t) => {
+  const fragmentA = parse('{ ... on User { name } }')
+    .definitions[0].selectionSet.selections[0];
+  const fragmentB = parse('{ ... on User2 { company } }')
+    .definitions[0].selectionSet.selections[0];
+
+  t.false(isSimilar(fragmentA, fragmentB))
+});

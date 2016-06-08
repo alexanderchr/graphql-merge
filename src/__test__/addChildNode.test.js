@@ -30,3 +30,13 @@ test('adds a selection to a field', (t) => {
   t.true(newField.selectionSet.selections.includes(selection));
   t.is(newField.selectionSet.selections.length, 2);
 });
+
+test('adds a selection to an inline fragment', (t) => {
+  const fragment = parse('query { ... on User { name } }')
+    .definitions[0].selectionSet.selections[0];
+  const selection = { kind: Kind.FIELD };
+  const newFragment = addChildNode(fragment, selection);
+
+  t.true(newFragment.selectionSet.selections.includes(selection));
+  t.is(newFragment.selectionSet.selections.length, 2);
+});
