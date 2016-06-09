@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Kind } from 'graphql';
+import { Kind, parse } from 'graphql';
 import isMergable from '../isMergable';
 
 test('is true when a and b is mergable', (t) => {
@@ -17,5 +17,11 @@ test('is false when a and b are of different kinds', (t) => {
 test('is false when a and b are operation definitions with different operations', (t) => {
   const a = { kind: Kind.OPERATION_DEFINITION, operation: 'query' };
   const b = { kind: Kind.OPERATION_DEFINITION, operation: 'mutation' };
+  t.false(isMergable(a, b));
+});
+
+test('is false when a and b has inconsistent selections', (t) => {
+  const a = parse('{ user { name } }').definitions[0].selectionSet.selections[0];
+  const b = parse('{ user }').definitions[0].selectionSet.selections[0];
   t.false(isMergable(a, b));
 });

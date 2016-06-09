@@ -1,3 +1,4 @@
+import getAllChildNodes from './getAllChildNodes';
 
 export default function isMergable(a, b) {
   if (a.kind !== b.kind) {
@@ -12,7 +13,11 @@ export default function isMergable(a, b) {
   // TODO: Conflicting variables. OK to just throw for now. Later we want to either assign aliases
   // or rewrite variable names.
 
-  // TODO: If a has subselections and b does not, there is an error
+  const nodesOfA = getAllChildNodes(a);
+  const nodesOfB = getAllChildNodes(b);
+  if ((nodesOfA === null && nodesOfB !== null) || (nodesOfA !== null && nodesOfB === null)) {
+    return false;
+  }
 
   return true;
 }

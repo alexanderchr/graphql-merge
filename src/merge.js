@@ -13,7 +13,7 @@ export default function merge(a, b) {
   // TODO: also shallow clone the references to child nodes
   let destination = Object.assign({}, a);
 
-  const nodesToCopy = getAllChildNodes(b);
+  const nodesToCopy = getAllChildNodes(b) || [];
   for (const node of nodesToCopy) {
     const similarNodeInDestination = findSimilarChildNode(destination, node);
 

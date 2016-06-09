@@ -78,7 +78,7 @@ test('merges inline fragments', (t) => {
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { ... on User { address name phone } } }');
 });
 
-test.skip('throws when merging a selection without sub-selections with one with', (t) => {
+test('throws when merging a selection without sub-selections with one with', (t) => {
   const a = parse('query { users { address { firstLine } } }');
   const b = parse('query { users { address } }');
 
