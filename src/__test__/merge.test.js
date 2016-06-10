@@ -62,10 +62,9 @@ test('merges deeply', (t) => {
   );
 });
 
-// not implemented
-test.skip('throws when given two fragments with the same name', (t) => {
-  const a = parse('{ fragment Something on User { address } } }');
-  const b = parse('{ fragment Something on Person { name } } }');
+test('throws when given two fragments with the same name', (t) => {
+  const a = parse('fragment Something on User { address }');
+  const b = parse('fragment Something on Person { name }');
 
   t.throws(() => merge(a, b));
 });

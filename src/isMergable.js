@@ -1,7 +1,12 @@
+import { Kind } from 'graphql';
 import getAllChildNodes from './getAllChildNodes';
 
 export default function isMergable(a, b) {
   if (a.kind !== b.kind) {
+    return false;
+  }
+
+  if (a.kind === Kind.FRAGMENT_DEFINITION) {
     return false;
   }
 

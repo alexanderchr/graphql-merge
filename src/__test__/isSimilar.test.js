@@ -76,6 +76,22 @@ test('false given two fields with same arguments but different variables', (t) =
   t.false(isSimilar(fieldA, fieldB));
 });
 
+// Fragment definition
+
+test('true given two fragment definitions with same name', (t) => {
+  const fragmentA = parse('fragment UserDetails on User { name }').definitions[0];
+  const fragmentB = parse('fragment UserDetails on User { company }').definitions[0];
+
+  t.true(isSimilar(fragmentA, fragmentB));
+});
+
+test('false given two fragment definitions with different names', (t) => {
+  const fragmentA = parse('fragment UserDetails on User { name }').definitions[0];
+  const fragmentB = parse('fragment UserContactDetails on User { phone }').definitions[0];
+
+  t.false(isSimilar(fragmentA, fragmentB));
+});
+
 // Inline fragment
 
 test('true given two inline fragments with same type definitions', (t) => {

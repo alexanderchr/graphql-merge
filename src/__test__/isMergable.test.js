@@ -25,3 +25,9 @@ test('is false when a and b has inconsistent selections', (t) => {
   const b = parse('{ user }').definitions[0].selectionSet.selections[0];
   t.false(isMergable(a, b));
 });
+
+test('false when a and b are fragment definitions', (t) => {
+  const a = parse('fragment UserDetails on User { company }').definitions[0];
+  const b = parse('fragment UserDetails on User { lastName }').definitions[0];
+  t.false(isMergable(a, b));
+});

@@ -32,6 +32,9 @@ export default function isSimilar(a, b) {
         && (a.alias && a.alias.value) === (b.alias && b.alias.value)
         && isArgumentsSimilar(a.arguments, b.arguments);
 
+    case Kind.FRAGMENT_DEFINITION:
+      return a.name.value === b.name.value;
+
     case Kind.INLINE_FRAGMENT:
       return a.typeCondition.name.value === b.typeCondition.name.value;
 
