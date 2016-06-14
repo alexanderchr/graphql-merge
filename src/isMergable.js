@@ -1,5 +1,4 @@
 import { Kind } from 'graphql';
-import getAllChildNodes from './getAllChildNodes';
 
 export default function isMergable(a, b) {
   if (a.kind !== b.kind) {
@@ -15,12 +14,8 @@ export default function isMergable(a, b) {
     return false;
   }
 
-  // TODO: Conflicting variables. OK to just throw for now. Later we want to either assign aliases
-  // or rewrite variable names.
-
-  const nodesOfA = getAllChildNodes(a);
-  const nodesOfB = getAllChildNodes(b);
-  if ((nodesOfA === null && nodesOfB !== null) || (nodesOfA !== null && nodesOfB === null)) {
+  if ((a.selectionSet === null && b.selectionSet !== null)
+    || (a.selectionSet !== null && b.selectionSet === null)) {
     return false;
   }
 

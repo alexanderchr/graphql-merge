@@ -1,16 +1,25 @@
-import { Kind } from 'graphql';
+import { visit, Kind } from 'graphql';
 
-export default function getAllNodes(parent) {
-  switch (parent.kind) {
-    case Kind.DOCUMENT:
-      return parent.definitions;
+const FILTERED_KINDS = [Kind.NAME, Kind.NAMED_TYPE, Kind.ENUM];
 
-    case Kind.OPERATION_DEFINITION:
-    case Kind.FIELD:
-    case Kind.INLINE_FRAGMENT:
-      return parent.selectionSet && parent.selectionSet.selections;
+export default function getAllChildNodes(parent) {
+  const nodes = [];
+  let first = true;
+  visit(parent, {
+    enter(node) {
+      if (FILTERED_KINDS.includes(node.kind)) {
+        return false;
+      }
 
-    default:
-      return [];
-  }
+      if (first) {
+        first = false;
+        return undefined;
+      }
+
+      nodes.push(node);
+      return false;
+    },
+  });
+
+  return nodes;
 }

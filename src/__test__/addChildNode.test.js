@@ -1,6 +1,5 @@
 import test from 'ava';
 import { parse, Kind } from 'graphql';
-
 import addChildNode from '../addChildNode';
 
 test('adds a definition to a document', (t) => {
@@ -12,31 +11,28 @@ test('adds a definition to a document', (t) => {
   t.is(newDocument.definitions.length, 2);
 });
 
-test('adds a selection to an operation definition', (t) => {
+test('adds a selection set to an operation definition', (t) => {
   const operationDefinition = parse('query { users { name } }').definitions[0];
-  const selection = { kind: Kind.FIELD };
-  const newOperationDefinition = addChildNode(operationDefinition, selection);
+  const selectionSet = { kind: Kind.SELECTION_SET };
+  const newOperationDefinition = addChildNode(operationDefinition, selectionSet);
 
-  t.true(newOperationDefinition.selectionSet.selections.includes(selection));
-  t.is(newOperationDefinition.selectionSet.selections.length, 2);
+  t.is(newOperationDefinition.selectionSet, selectionSet);
 });
 
-test('adds a selection to a field', (t) => {
-  const field = parse('query { users { name } }')
-    .definitions[0].selectionSet.selections[0];
-  const selection = { kind: Kind.FIELD };
-  const newField = addChildNode(field, selection);
+test('adds a field to a selection set', (t) => {
+  const selectionSet = parse('query { users { name } }').definitions[0].selectionSet;
+  const field = { kind: Kind.FIELD };
+  const newSelectionSet = addChildNode(selectionSet, field);
 
-  t.true(newField.selectionSet.selections.includes(selection));
-  t.is(newField.selectionSet.selections.length, 2);
+  t.true(newSelectionSet.selections.includes(field));
+  t.is(newSelectionSet.selections.length, 2);
 });
 
-test('adds a selection to an inline fragment', (t) => {
-  const fragment = parse('query { ... on User { name } }')
-    .definitions[0].selectionSet.selections[0];
-  const selection = { kind: Kind.FIELD };
-  const newFragment = addChildNode(fragment, selection);
+test('adds inline fragments to a selection set', (t) => {
+  const selectionSet = parse('query { users { name } }').definitions[0].selectionSet;
+  const inlineFragment = { kind: Kind.INLINE_FRAGMENT };
+  const newSelectionSet = addChildNode(selectionSet, inlineFragment);
 
-  t.true(newFragment.selectionSet.selections.includes(selection));
-  t.is(newFragment.selectionSet.selections.length, 2);
+  t.true(newSelectionSet.selections.includes(inlineFragment));
+  t.is(newSelectionSet.selections.length, 2);
 });

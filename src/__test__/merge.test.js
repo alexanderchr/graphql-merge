@@ -19,6 +19,16 @@ test('merges', (t) => {
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address something } }');
 });
 
+
+test('merges', (t) => {
+  const a = parse('{ users(name: String) { name } }');
+  const b = parse('{ users(name: String) { address something } }');
+
+  const mergeResult = merge(a, b);
+  t.is(notSoPrettyPrintQuery(mergeResult), '{ users(name: String) { name address something } }');
+});
+
+
 test('does not add same field twice', (t) => {
   const a = parse('{ users { name } }');
   const b = parse('{ users { name address } }');

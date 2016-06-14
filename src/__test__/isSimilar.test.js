@@ -100,7 +100,7 @@ test('true given two inline fragments with same type definitions', (t) => {
   const fragmentB = parse('{ ... on User { company } }')
     .definitions[0].selectionSet.selections[0];
 
-  t.true(isSimilar(fragmentA, fragmentB))
+  t.true(isSimilar(fragmentA, fragmentB));
 });
 
 test('false given two inline fragments with different type definitions', (t) => {
@@ -109,5 +109,25 @@ test('false given two inline fragments with different type definitions', (t) => 
   const fragmentB = parse('{ ... on User2 { company } }')
     .definitions[0].selectionSet.selections[0];
 
-  t.false(isSimilar(fragmentA, fragmentB))
+  t.false(isSimilar(fragmentA, fragmentB));
+});
+
+// argument
+
+test('true given arguments with same names and same values', (t) => {
+  const document = parse('{ users(foo: "bar") employees(foo: "bar") }');
+
+  const argumentA = document.definitions[0].selectionSet.selections[0].arguments[0];
+  const argumentB = document.definitions[0].selectionSet.selections[1].arguments[0];
+
+  t.true(isSimilar(argumentA, argumentB));
+});
+
+test('false given arguments with same names and different values', (t) => {
+  const document = parse('{ users(foo: "bar") employees(foo: "bar2") }');
+
+  const argumentA = document.definitions[0].selectionSet.selections[0].arguments[0];
+  const argumentB = document.definitions[0].selectionSet.selections[1].arguments[0];
+
+  t.false(isSimilar(argumentA, argumentB));
 });

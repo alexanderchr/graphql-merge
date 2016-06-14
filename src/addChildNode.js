@@ -1,11 +1,9 @@
 import { Kind } from 'graphql';
 
-// TODO: This approach leads to a lot of unnecesscary cloning. The function is only used within
-// the loop of `merge` and the node collections might as well be mutated within that function,
-// as long as they are shallow-copied early in that function
+// This is really dependent on the implementation of graphql-js
 export default function addChildNode(parent, node) {
-  switch (parent.kind) {
-    case Kind.DOCUMENT:
+  switch (node.kind) {
+    case Kind.OPERATION_DEFINITION:
       return {
         ...parent,
         definitions: [
@@ -14,15 +12,20 @@ export default function addChildNode(parent, node) {
         ],
       };
 
-    case Kind.OPERATION_DEFINITION:
+    case Kind.SELECTION_SET:
+      return {
+        ...parent,
+        selectionSet: node,
+      };
+
     case Kind.INLINE_FRAGMENT:
     case Kind.FIELD:
       return {
         ...parent,
-        selectionSet: {
-          ...parent.selectionSet,
-          selections: [...parent.selectionSet.selections, node],
-        },
+        selections: [
+          ...parent.selections,
+          node,
+        ],
       };
 
     default:

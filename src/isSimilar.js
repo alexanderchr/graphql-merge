@@ -4,7 +4,7 @@ import differenceWith from 'lodash.differencewith';
 function isArgumentSimilar(a, b) {
   return a.name.value === b.name.value
   && a.value.value === b.value.value // literal values
-  && a.value.name.value === b.value.name.value; // variable names
+  && (!a.value.name || (a.value.name.value === b.value.name.value)); // variable names
 }
 
 // TODO: extend, i.e: `first: 3` and `first: 8` could (with configuration) be reduced to `first: 8`
@@ -38,7 +38,15 @@ export default function isSimilar(a, b) {
     case Kind.INLINE_FRAGMENT:
       return a.typeCondition.name.value === b.typeCondition.name.value;
 
+    case Kind.SELECTION_SET:
+      return true;
+
+    case Kind.ARGUMENT:
+      return (a.name.value === b.name.value) && (a.value.value === b.value.value);
+
     default:
+      // eslint-disable-next-line no-console
+      console.error(`Unhandled node kind '${kind}'. This is a bug in graphql-merge.`);
       return false;
   }
 }

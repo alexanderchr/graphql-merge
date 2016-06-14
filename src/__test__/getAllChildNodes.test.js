@@ -1,61 +1,47 @@
 import test from 'ava';
-import { Kind } from 'graphql';
+import { parse } from 'graphql';
 
 import getAllChildNodes from '../getAllChildNodes';
 
 test('gets all definitions of a document', (t) => {
-  const definitions = [
-    { kind: Kind.OPERATION_DEFINITION, loc: '653' },
-    { kind: Kind.OPERATION_DEFINITION, loc: '21' },
-    { kind: Kind.OPERATION_DEFINITION, loc: '32' },
-  ];
+  const document = parse('query { users } mutation { addUser }');
 
-  const document = {
-    kind: Kind.DOCUMENT,
-    definitions,
-  };
-
-  t.deepEqual(getAllChildNodes(document), definitions);
+  const childNodes = getAllChildNodes(document);
+  t.is(childNodes.length, 2);
+  t.deepEqual(childNodes[0], document.definitions[0]);
+  t.deepEqual(childNodes[1], document.definitions[1]);
 });
 
-test('gets all selections of an operation definition', (t) => {
-  const selections = [
-    { kind: Kind.FIELD, loc: '12' },
-    { kind: Kind.FIELD, loc: '34' },
-  ];
+test('gets selection set of an operation definition', (t) => {
+  const operationDefinition = parse('query { users companies }').definitions[0];
 
-  const operationDefinition = {
-    kind: Kind.OPERATION_DEFINITION,
-    selectionSet: { selections },
-  };
-
-  t.deepEqual(getAllChildNodes(operationDefinition), selections);
+  const childNodes = getAllChildNodes(operationDefinition);
+  t.is(childNodes.length, 1);
+  t.deepEqual(childNodes[0], operationDefinition.selectionSet);
 });
 
-test('gets all selections of a field', (t) => {
-  const selections = [
-    { kind: Kind.FIELD, loc: '4' },
-    { kind: Kind.FIELD, loc: '3' },
-  ];
+test('gets all selections of a selection set', (t) => {
+  const selectionSet = parse('query { users companies }').definitions[0].selectionSet;
 
-  const field = {
-    kind: Kind.FIELD,
-    selectionSet: { selections },
-  };
-
-  t.deepEqual(getAllChildNodes(field), selections);
+  const childNodes = getAllChildNodes(selectionSet);
+  t.is(childNodes.length, 2);
+  t.is(childNodes[0].name.value, 'users');
+  t.is(childNodes[1].name.value, 'companies');
 });
 
-test('gets all selections of an inline fragment', (t) => {
-  const selections = [
-    { kind: Kind.FIELD, loc: '4' },
-    { kind: Kind.FIELD, loc: '3' },
-  ];
+test('gets selection set of a field', (t) => {
+  const field = parse('query { users { name } }').definitions[0].selectionSet.selections[0];
 
-  const inlineFragment = {
-    kind: Kind.INLINE_FRAGMENT,
-    selectionSet: { selections },
-  };
+  const childNodes = getAllChildNodes(field);
+  t.is(childNodes.length, 1);
+  t.deepEqual(childNodes[0], field.selectionSet);
+});
 
-  t.deepEqual(getAllChildNodes(inlineFragment), selections);
+test('gets selection set of an inline fragment', (t) => {
+  const fragment =
+    parse('query { ... on User { name } }').definitions[0].selectionSet.selections[0];
+
+  const childNodes = getAllChildNodes(fragment);
+  t.is(childNodes.length, 1);
+  t.deepEqual(childNodes[0], fragment.selectionSet);
 });
