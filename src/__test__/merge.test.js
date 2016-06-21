@@ -72,7 +72,52 @@ test('merges deeply', (t) => {
   );
 });
 
-test('throws when given two fragments with the same name', (t) => {
+test('merges fields with identical arguments', (t) => {
+  const a = parse('{ users(first: 10) { address } }');
+  const b = parse('{ users(first: 10) { email } }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    '{ users(first: 10) { address email } }'
+  );
+});
+
+// TODO: ($a: String, $a: String) should be merged into ($a: String)
+test('merges fields with differing arguments when values are variables', (t) => {
+  const a = parse('query ($a: String) { users(first: $a) { address } }');
+  const b = parse('query ($a: String) { users(first: $a) { email } }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query ($a: String, $a: String) { users(first: $a) { address email } }'
+  );
+});
+
+test('does not merge fields with differing arguments', (t) => {
+  const a = parse('{ users(first: 5) { address } }');
+  const b = parse('{ users(first: 10) { email } }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    '{ users(first: 5) { address } users(first: 10) { email } }'
+  );
+});
+
+test('does not merge fields with differing arguments when values are variables', (t) => {
+  const a = parse('query ($a: String) { users(first: $a) { address } }');
+  const b = parse('query ($b: String) { users(first: $b) { email } }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query ($a: String, $b: String) { users(first: $a) { address } users(first: $b) { email } }'
+  );
+});
+
+test('throws given two fragments with the same name', (t) => {
   const a = parse('fragment Something on User { address }');
   const b = parse('fragment Something on Person { name }');
 
