@@ -3,14 +3,14 @@ import { Kind, parse } from 'graphql';
 
 import isSimilar from '../isSimilar';
 
-// Document
-
 test('false given two nodes of different kinds', (t) => {
   const document = { kind: Kind.DOCUMENT };
   const operationDefinition = { kind: Kind.OPERATION_DEFINITION };
 
   t.false(isSimilar(document, operationDefinition));
 });
+
+// Document
 
 test('true given two any two documents', (t) => {
   const documentA = parse('query { user }');
@@ -21,11 +21,32 @@ test('true given two any two documents', (t) => {
 
 // Operation definition
 
-test('true given any two operation definitions', (t) => {
+test('true given two operation definitions without names', (t) => {
+  const documentA = parse('query { user }');
+  const documentB = parse('query { user }');
+
+  t.true(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
+test('true given two operation definitions with equal names', (t) => {
   const documentA = parse('query User { user }');
   const documentB = parse('query User { user }');
 
   t.true(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
+test('false given two operation definitions with different names', (t) => {
+  const documentA = parse('query User { user }');
+  const documentB = parse('query User2 { user }');
+
+  t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
+test('false given two operation definitions with different operations', (t) => {
+  const documentA = parse('query User { user }');
+  const documentB = parse('mutation User { user }');
+
+  t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
 });
 
 // Field

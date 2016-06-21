@@ -31,10 +31,14 @@ test('throws when merging two different operations', (t) => {
   const a = parse('query { users { name address } }');
   const b = parse('mutation { addUser }');
 
-  t.throws(() => merge(a, b));
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    '{ users { name address } } mutation { addUser }'
+  );
 });
 
-test.skip('does not merge operations with different names', (t) => {
+test('does not merge operations with different names', (t) => {
   const a = parse('query VeryGood { users { name address } }');
   const b = parse('query Important { users { name address } }');
 

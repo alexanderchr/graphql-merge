@@ -9,11 +9,6 @@ export default function isMergable(a, b) {
     return false;
   }
 
-  // There can only be one kind of operation because we want there to be just one operation
-  if (a.operation !== b.operation) {
-    return false;
-  }
-
   if ((a.selectionSet === null && b.selectionSet !== null)
     || (a.selectionSet !== null && b.selectionSet === null)) {
     return false;

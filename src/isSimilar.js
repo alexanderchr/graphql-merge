@@ -49,7 +49,8 @@ export default function isSimilar(a, b) {
       return true;
 
     case Kind.OPERATION_DEFINITION:
-      return true;
+      return a.operation === b.operation
+        && (!(a.name && b.name) || (a.name.value === b.name.value));
 
     case Kind.FIELD:
       return (a.name && a.name.value) === (b.name && b.name.value)
