@@ -131,3 +131,45 @@ test('false given arguments with same names and different values', (t) => {
 
   t.false(isSimilar(argumentA, argumentB));
 });
+
+// variable definition
+
+test('true given variable definitions with same name and same type', (t) => {
+  const documentA = parse('query($a: String) { users }');
+  const documentB = parse('query($a: String) { users }');
+
+  const variableA = documentA.definitions[0].variableDefinitions[0];
+  const variableB = documentB.definitions[0].variableDefinitions[0];
+
+  t.true(isSimilar(variableA, variableB));
+});
+
+test('false given variable definitions with different names and same types', (t) => {
+  const documentA = parse('query($a: String) { users }');
+  const documentB = parse('query($b: String) { users }');
+
+  const variableA = documentA.definitions[0].variableDefinitions[0];
+  const variableB = documentB.definitions[0].variableDefinitions[0];
+
+  t.false(isSimilar(variableA, variableB));
+});
+
+test('false given variable definitions with same name and different types', (t) => {
+  const documentA = parse('query($a: String) { users }');
+  const documentB = parse('query($a: Number) { users }');
+
+  const variableA = documentA.definitions[0].variableDefinitions[0];
+  const variableB = documentB.definitions[0].variableDefinitions[0];
+
+  t.false(isSimilar(variableA, variableB));
+});
+
+test('false given variable definitions with same name and different types', (t) => {
+  const documentA = parse('query($a: String!) { users }');
+  const documentB = parse('query($a: Number!) { users }');
+
+  const variableA = documentA.definitions[0].variableDefinitions[0];
+  const variableB = documentB.definitions[0].variableDefinitions[0];
+
+  t.false(isSimilar(variableA, variableB));
+});

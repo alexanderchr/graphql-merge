@@ -19,16 +19,6 @@ test('merges', (t) => {
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address something } }');
 });
 
-
-test('merges', (t) => {
-  const a = parse('{ users(name: String) { name } }');
-  const b = parse('{ users(name: String) { address something } }');
-
-  const mergeResult = merge(a, b);
-  t.is(notSoPrettyPrintQuery(mergeResult), '{ users(name: String) { name address something } }');
-});
-
-
 test('does not add same field twice', (t) => {
   const a = parse('{ users { name } }');
   const b = parse('{ users { name address } }');
@@ -37,28 +27,22 @@ test('does not add same field twice', (t) => {
   t.is(notSoPrettyPrintQuery(mergeResult), '{ users { name address } }');
 });
 
-test('throw when merging two different operations', (t) => {
+test('throws when merging two different operations', (t) => {
   const a = parse('query { users { name address } }');
   const b = parse('mutation { addUser }');
 
   t.throws(() => merge(a, b));
 });
 
-// replaces test below
-test.skip('removes operation name when two named operations are merged', (t) => {
+test.skip('does not merge operations with different names', (t) => {
   const a = parse('query VeryGood { users { name address } }');
   const b = parse('query Important { users { name address } }');
 
   const mergeResult = merge(a, b);
-  t.is(notSoPrettyPrintQuery(mergeResult), 'query { users { name address } }');
-});
-
-test('merges operations with different names', (t) => {
-  const a = parse('query VeryGood { users { name address } }');
-  const b = parse('query Important { users { name address } }');
-
-  const mergeResult = merge(a, b);
-  t.is(notSoPrettyPrintQuery(mergeResult), 'query VeryGood { users { name address } }');
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query VeryGood { users { name address } } query Important { users { name address } }'
+  );
 });
 
 test('merges deeply', (t) => {
@@ -83,7 +67,6 @@ test('merges fields with identical arguments', (t) => {
   );
 });
 
-// TODO: ($a: String, $a: String) should be merged into ($a: String)
 test('merges fields with differing arguments when values are variables', (t) => {
   const a = parse('query ($a: String) { users(first: $a) { address } }');
   const b = parse('query ($a: String) { users(first: $a) { email } }');
@@ -91,7 +74,7 @@ test('merges fields with differing arguments when values are variables', (t) => 
   const mergeResult = merge(a, b);
   t.is(
     notSoPrettyPrintQuery(mergeResult),
-    'query ($a: String, $a: String) { users(first: $a) { address email } }'
+    'query ($a: String) { users(first: $a) { address email } }'
   );
 });
 
@@ -114,6 +97,39 @@ test('does not merge fields with differing arguments when values are variables',
   t.is(
     notSoPrettyPrintQuery(mergeResult),
     'query ($a: String, $b: String) { users(first: $a) { address } users(first: $b) { email } }'
+  );
+});
+
+test('merges operations with equal variable definitions', (t) => {
+  const a = parse('query($name: String!) { users }');
+  const b = parse('query($name: String!) { companies }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query ($name: String!) { users companies }'
+  );
+});
+
+test('merges operations with non-clashing variable definitions', (t) => {
+  const a = parse('query($name: String!) { users }');
+  const b = parse('query($lastName: String) { users }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query ($name: String!, $lastName: String) { users }'
+  );
+});
+
+test.skip('does not merge two operations with clashing variable definitions', (t) => {
+  const a = parse('query($name: String!) { users }');
+  const b = parse('query($name: String) { users }');
+
+  const mergeResult = merge(a, b);
+  t.is(
+    notSoPrettyPrintQuery(mergeResult),
+    'query ($name: String!) { users } query ($name: String) { users }'
   );
 });
 

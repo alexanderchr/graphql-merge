@@ -14,6 +14,30 @@ function isArgumentsSimilar(a, b) {
   && differenceWith(b, a, isArgumentSimilar).length === 0;
 }
 
+function isVariablesSimilar(a, b) {
+  if ((a.variable && !b.variable) || (!a.variable && b.variable)) {
+    return false;
+  }
+
+  if (a.variable && b.variable && (a.variable.name.value !== b.variable.name.value)) {
+    return false;
+  }
+
+  if (a.type && b.type) {
+    if (a.type.kind !== b.type.kind) {
+      return false;
+    }
+
+    if ((a.type.name && b.type.name) && (a.type.name.value !== b.type.name.value)) {
+      return false;
+    }
+
+    return isVariablesSimilar(a.type, b.type);
+  }
+
+  return true;
+}
+
 export default function isSimilar(a, b) {
   if (a.kind !== b.kind) {
     return false;
@@ -43,6 +67,9 @@ export default function isSimilar(a, b) {
 
     case Kind.ARGUMENT:
       return (a.name.value === b.name.value) && (a.value.value === b.value.value);
+
+    case Kind.VARIABLE_DEFINITION:
+      return isVariablesSimilar(a, b);
 
     default:
       // eslint-disable-next-line no-console

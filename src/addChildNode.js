@@ -28,6 +28,15 @@ export default function addChildNode(parent, node) {
         ],
       };
 
+    case Kind.VARIABLE_DEFINITION:
+      return {
+        ...parent,
+        variableDefinitions: [
+          ...parent.variableDefinitions,
+          node,
+        ],
+      }
+
     default:
       return undefined;
   }

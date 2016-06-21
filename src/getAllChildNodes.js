@@ -1,6 +1,6 @@
 import { visit, Kind } from 'graphql';
 
-const FILTERED_KINDS = [Kind.NAME, Kind.NAMED_TYPE, Kind.ENUM];
+const FILTERED_KINDS = [Kind.NAME, Kind.NAMED_TYPE, Kind.ENUM, Kind.INT, Kind.VARIABLE, Kind.NON_NULL_TYPE];
 
 export default function getAllChildNodes(parent) {
   const nodes = [];

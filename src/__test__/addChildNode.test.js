@@ -36,3 +36,12 @@ test('adds inline fragments to a selection set', (t) => {
   t.true(newSelectionSet.selections.includes(inlineFragment));
   t.is(newSelectionSet.selections.length, 2);
 });
+
+test('adds variable definitions to definition', (t) => {
+  const definition = parse('query($name: String) { users }').definitions[0];
+  const variableDefinition = { kind: Kind.VARIABLE_DEFINITION };
+  const newDefinition = addChildNode(definition, variableDefinition);
+
+  t.true(newDefinition.variableDefinitions.includes(variableDefinition));
+  t.is(newDefinition.variableDefinitions.length, 2);
+});
