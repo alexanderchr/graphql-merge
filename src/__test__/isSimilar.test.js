@@ -49,6 +49,27 @@ test('false given two operation definitions with different operations', (t) => {
   t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
 });
 
+test('true given two operation definitions with equal variable definitions', (t) => {
+  const documentA = parse('query User($name: String) { user }');
+  const documentB = parse('query User($name: String) { user }');
+
+  t.true(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
+test('true given two operation definitions with complementing variable definitions', (t) => {
+  const documentA = parse('query User($name: String) { user }');
+  const documentB = parse('query User($name: String) { user }');
+
+  t.true(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
+test('false given two operation definitions with clashing variable definitions', (t) => {
+  const documentA = parse('query User($name: String!) { user }');
+  const documentB = parse('query User($name: String) { user }');
+
+  t.false(isSimilar(documentA.definitions[0], documentB.definitions[0]));
+});
+
 // Field
 
 test('true given two fields of same name without arguments or alias', (t) => {

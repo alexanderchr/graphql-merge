@@ -126,7 +126,7 @@ test('merges operations with non-clashing variable definitions', (t) => {
   );
 });
 
-test.skip('does not merge two operations with clashing variable definitions', (t) => {
+test('does not merge two operations with clashing variable definitions', (t) => {
   const a = parse('query($name: String!) { users }');
   const b = parse('query($name: String) { users }');
 

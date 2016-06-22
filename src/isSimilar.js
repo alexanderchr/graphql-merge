@@ -38,6 +38,17 @@ function isVariablesSimilar(a, b) {
   return true;
 }
 
+function findVariableWithName(name, variables) {
+  return variables.filter(variable => variable.variable.name.value === name)[0];
+}
+
+function areVariablesWithSameNameSimilar(a, b) {
+  return a
+    .map(an => ({ a: an, b: findVariableWithName(an.variable.name.value, b) }))
+    .filter(x => x.b !== undefined)
+    .every(x => isVariablesSimilar(x.a, x.b)) ;
+}
+
 export default function isSimilar(a, b) {
   if (a.kind !== b.kind) {
     return false;
@@ -50,7 +61,9 @@ export default function isSimilar(a, b) {
 
     case Kind.OPERATION_DEFINITION:
       return a.operation === b.operation
-        && (!(a.name && b.name) || (a.name.value === b.name.value));
+        && (!(a.name && b.name) || (a.name.value === b.name.value))
+        && (!(a.variableDefinitions && b.variableDefinitions)
+          || areVariablesWithSameNameSimilar(a.variableDefinitions, b.variableDefinitions));
 
     case Kind.FIELD:
       return (a.name && a.name.value) === (b.name && b.name.value)
