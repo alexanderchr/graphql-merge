@@ -37,7 +37,7 @@ query {
 
 ```js
 import { parse, print } from 'graphql';
-import merge from 'graphql-merge';
+import { merge } from 'graphql-merge';
 
 const queryB = parse('{ users { name address } } }');
 const queryA = parse('{ users { favoriteColor } }');
